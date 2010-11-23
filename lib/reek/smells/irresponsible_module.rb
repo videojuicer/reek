@@ -15,6 +15,8 @@ module Reek
 
       MODULE_NAME_KEY = 'module_name'
 
+      @@examined = {}
+
       def self.contexts      # :nodoc:
         [:class]
       end
@@ -25,6 +27,8 @@ module Reek
       # @return [Array<SmellWarning>]
       #
       def examine_context(ctx)
+        return [] if @@examined.key?(ctx.full_name)
+        @@examined[ctx.full_name] = true
         comment = Source::CodeComment.new(ctx.exp.comments)
         return [] if comment.is_descriptive?
         smell = SmellWarning.new(SMELL_CLASS, ctx.full_name, [ctx.exp.line],
